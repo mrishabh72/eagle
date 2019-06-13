@@ -1,0 +1,62 @@
+'''
+This program creates a drwaing pad where you can draw anything using mouse.
+left click to draw
+double left click to clear the drawing pad
+
+'''
+
+
+from cv2.cv2 import namedWindow, EVENT_LBUTTONDOWN, circle, setMouseCallback,imshow,waitKey,   \
+ destroyAllWindows , EVENT_MOUSEMOVE,EVENT_LBUTTONUP,EVENT_LBUTTONDBLCLK, EVENT_RBUTTONDBLCLK, \
+ createTrackbar
+from numpy import zeros,uint8
+
+windowname="Drawing Pad"
+img=zeros((1024,1024,3),uint8)          #Defines resolution
+namedWindow(windowname)
+click=0
+color=(255,255,255)
+
+
+def set_red(red):
+    global color
+    color=(color[0],color[1],red)
+def set_blue(blue):
+    global color
+    color=(blue,color[1],color[2])
+def set_green(green):
+    global color
+    color=(color[0],green,color[2])
+    
+def draw_circle(event,x,y,flags,param):
+    global click,img,color
+    if event==EVENT_LBUTTONDOWN:
+        click =1
+        circle(img,(x,y),5,color,-1)
+        
+    if event==EVENT_LBUTTONUP:
+        click=0
+    if event==EVENT_LBUTTONDBLCLK:
+        img=zeros((1024,1024,3),uint8)
+        #color=(0,0,255)
+#    if event ==EVENT_RBUTTONDBLCLK:                                              
+#        color = (0,255,0)                           
+    if event == EVENT_MOUSEMOVE and click ==1 :
+        circle(img,(x,y),5,color,-1)
+
+
+setMouseCallback(windowname,draw_circle)
+
+def main():
+    createTrackbar('red',windowname,0,255,set_red)
+    createTrackbar('blue',windowname,0,255,set_blue)
+    createTrackbar('green',windowname,0,255,set_green)
+
+    while(True):
+        imshow(windowname,img)
+        if waitKey(1)==27:
+            break
+    destroyAllWindows()
+        
+if __name__=="__main__":
+    main()
